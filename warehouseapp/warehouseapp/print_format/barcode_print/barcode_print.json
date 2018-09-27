@@ -1,0 +1,23 @@
+{
+ "align_labels_right": 0, 
+ "creation": "2018-07-29 12:30:56.980312", 
+ "css": "\t.print-format table, .print-format tr, \n\t.print-format td, .print-format div, .print-format p {\n\t\tfont-family: Arial Black,Arial Bold,Gadget,sans-serif;\n\t\tline-height: 120%;\n\t\tvertical-align: middle;\n\t\tmargin-left:60px;\n\t}\n\t.pagebreak { page-break-before: always; }\n\t@media screen {\n\t\t.print-format {\n\t\t\twidth: 17mm;\n\t\t\tpadding: 0in;\n\t\t\tmin-height: 17mm;\n\t\t\t\n\t\t}\n\t}", 
+ "custom_format": 1, 
+ "disabled": 0, 
+ "doc_type": "Packing Slips", 
+ "docstatus": 0, 
+ "doctype": "Print Format", 
+ "font": "Default", 
+ "html": "<img src=\"http://www.barcodes4.me/barcode/qr/myfilename.png?value={{ doc.name }}\">", 
+ "idx": 0, 
+ "line_breaks": 0, 
+ "modified": "2018-09-27 13:56:27.962187", 
+ "modified_by": "Administrator", 
+ "module": "warehouseapp", 
+ "name": "barcode print", 
+ "owner": "Administrator", 
+ "print_format_builder": 1, 
+ "print_format_type": "Server", 
+ "show_section_headings": 0, 
+ "standard": "Yes"
+}
