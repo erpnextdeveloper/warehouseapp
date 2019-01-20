@@ -22,8 +22,8 @@ import logging
 
 
 @frappe.whitelist()
-def getLastPackageNumber(customer):
-	last_no=frappe.db.sql("""select package_no from `tabPacking Slips` where customer=%s  order by  creation desc limit 1""",customer)
+def getLastPackageNumber(customer,warehouse):
+	last_no=frappe.db.sql("""select package_no from `tabPacking Slips` where customer=%s and warehouse=%s  order by  creation desc limit 1""",(customer,warehouse))
 	if last_no:
 		return int(last_no[0][0])+1
 	else:
@@ -41,7 +41,7 @@ def getItemCode(brand,barcode,print_format):
 		else:
 			return barcode
 	else:
-		return barcode
+		frappe.throw("Barcode Not Avaible For This Brand")
 
 
 
@@ -164,3 +164,18 @@ def assignSalesOrderInDelivery1(delivery_id):
 		doc_final=frappe.get_doc("Delivery Note",delivery_id)
 		doc_final.save()
 		
+
+@frappe.whitelist()
+def getAddressName(warehouse):
+	add_name=frappe.db.sql("""select ta.name from `tabAddress` as ta inner join `tabDynamic Link` as dl on ta.name=dl.parent where dl.link_name=%s""",warehouse)
+	if add_name:
+		if not add_name[0][0]==None:
+			return add_name[0][0]
+		else:
+			frappe.throw("{0} Address Not Found".format(warehouse))
+	else:
+		frappe.throw("{0} Address Not Found".format(warehouse))
+
+@frappe.whitelist()
+def updatePackingSlip(name):
+	frappe.db.set_value("Packing Slips",name,"is_delivery_note",1)
