@@ -28,10 +28,10 @@ class PackingSlips(Document):
 			#names = [name.split(self.product_code)[-1][1:] for name in names]
 
 			# split by (-) if cancelled
-			names = [cint(name.split('/')[-1]) for name in names]
+			names = [cint(name.split('-')[-1]) for name in names]
 
 			idx = max(names) + 1
 		else:
 			idx = 1
 
-		self.name = 'PKG/'+str(self.customer)+'/'+str(year_prefix)+'/'+str(month_prefix)+'/'+str(self.package_no) + ('/%.3i' % idx)
+		self.name = 'MB-'+str(year_prefix)+str(month_prefix)+'-'+str(self.customer) + ('-%.3i' % idx)

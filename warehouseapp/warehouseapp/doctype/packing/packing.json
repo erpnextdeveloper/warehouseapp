@@ -9,7 +9,7 @@
  "custom": 0, 
  "docstatus": 0, 
  "doctype": "DocType", 
- "document_type": "", 
+ "document_type": "Document", 
  "editable_grid": 1, 
  "engine": "InnoDB", 
  "fields": [
@@ -505,7 +505,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2018-12-29 02:58:11.670972", 
+ "modified": "2019-02-01 15:09:11.535624", 
  "modified_by": "Administrator", 
  "module": "warehouseapp", 
  "name": "Packing", 
