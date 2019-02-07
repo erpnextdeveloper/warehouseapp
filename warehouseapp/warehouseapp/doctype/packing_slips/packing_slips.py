@@ -8,6 +8,7 @@ from frappe.model import no_value_fields
 from frappe.model.document import Document
 from frappe.utils import cint, flt
 import datetime
+import random
 
 
 class PackingSlips(Document):
@@ -20,18 +21,14 @@ class PackingSlips(Document):
 		date=datetime.datetime(mydate.year,mydate.month,mydate.day)
 		year_prefix=frappe.db.get_value("Year",mydate.year,"prefix")
 		month_prefix=frappe.db.get_value("Month",date.strftime("%B"),"prefix")
+		idx = self.package_no
 
-		if names:
-			# name can be BOM/ITEM/001, BOM/ITEM/001-1, BOM-ITEM-001, BOM-ITEM-001-1
+		self.name = 'MB-'+str(year_prefix)+str(month_prefix)+'-'+str(self.id_generator()) + ('-%.3i' % idx)
 
-			# split by item
-			#names = [name.split(self.product_code)[-1][1:] for name in names]
-
-			# split by (-) if cancelled
-			names = [cint(name.split('-')[-1]) for name in names]
-
-			idx = max(names) + 1
+	def id_generator(self):
+		num=''.join(random.choice('0123456789') for _ in range(6))
+		check_num=frappe.db.sql("""select name from `tabRandom Number Generator` where name=%s""",num)
+		if len(check_num)>=1:
+			self.id_generator()
 		else:
-			idx = 1
-
-		self.name = 'MB-'+str(year_prefix)+str(month_prefix)+'-'+str(self.customer) + ('-%.3i' % idx)
+			return num

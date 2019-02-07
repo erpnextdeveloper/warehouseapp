@@ -23,9 +23,14 @@ import logging
 
 @frappe.whitelist()
 def getLastPackageNumber(customer,warehouse):
-	last_no=frappe.db.sql("""select package_no from `tabPacking Slips` where customer=%s and warehouse=%s  order by  creation desc limit 1""",(customer,warehouse))
+	last_no=frappe.db.sql("""select package_no,name from `tabPacking Slips` where customer=%s and warehouse=%s  order by  creation desc limit 1""",(customer,warehouse))
 	if last_no:
-		return int(last_no[0][0])+1
+		if not last_no[0][1]==None:
+			pack_doc=frappe.get_doc("Packing Slips",last_no[0][1])
+			if int(pack_doc.is_delivery_note)==1:
+				return 1
+			else:
+				return int(last_no[0][0])+1
 	else:
 		return 1
 
