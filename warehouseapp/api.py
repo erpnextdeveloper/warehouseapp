@@ -38,20 +38,18 @@ def getLastPackageNumber(customer,warehouse):
 
 
 @frappe.whitelist()
-def getItemCode(brand,barcode,print_format):
-	item_code=frappe.get_all("Item Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
-	if not len(item_code)==0:
-		if print_format=="Item Barcode":
+def getItemCode(brand,barcode,print_format,name):
+	if print_format=="Item Barcode" or print_format=="90x240":
+		item_code=frappe.get_all("Item Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
+		if not len(item_code)==0:
+			#frappe.msgprint(str(item_code[0]["name"]))
+			frappe.db.set_value("Packing",name,"item_code",item_code[0]["name"])
+			frappe.db.set_value("Packing",name,"barcode",barcode)
 			return item_code[0]["name"]
 		else:
-			return barcode
+			frappe.throw("Barcode Not Avaible For This Brand")
 	else:
-		frappe.throw("Barcode Not Avaible For This Brand")
-
-
-
-
-
+		return barcode
 
 
 @frappe.whitelist()
@@ -184,3 +182,30 @@ def getAddressName(warehouse):
 @frappe.whitelist()
 def updatePackingSlip(name):
 	frappe.db.set_value("Packing Slips",name,"is_delivery_note",1)
+
+
+@frappe.whitelist()
+def addImageLink():
+	doc=frappe.get_all("Item",filters={'disabled':0},fields=["name"])
+	for row in doc:
+		frappe.db.set_value("Item",row.name,"custom_image",'files/'+str(row.name)+'.jpg')
+
+
+@frappe.whitelist()
+def getItemCodeForIB(brand,barcode,name):
+	item_code=frappe.get_all("Item Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
+	if not len(item_code)==0:
+		#frappe.msgprint(str(item_code[0]["name"]))
+		frappe.db.set_value("Box Barcode 100x100",name,"item_code",item_code[0]["name"])
+		return item_code[0]["name"]
+	else:
+		frappe.throw("Barcode Not Avaible For This Brand")
+
+@frappe.whitelist()
+def getWarehouse():
+	warehouse=frappe.get_list("Warehouse",filters={},fields=["name"])
+	return warehouse
+
+
+
+

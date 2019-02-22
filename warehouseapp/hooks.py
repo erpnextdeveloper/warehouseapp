@@ -32,7 +32,7 @@ app_license = "MIT"
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
 
-fixtures=["Custom Script","Print Format"]
+fixtures=["Custom Script","Print Format","Custom Field"]
 
 # Home Pages
 # ----------
