@@ -2,15 +2,15 @@
 // rename this file from _test_[name] to test_[name] to activate
 // and remove above this line
 
-QUnit.test("test: Item Barcode", function (assert) {
+QUnit.test("test: Brand Wise Barcode", function (assert) {
 	let done = assert.async();
 
 	// number of asserts
 	assert.expect(1);
 
 	frappe.run_serially([
-		// insert a new Item Barcode
-		() => frappe.tests.make('Item Barcode', [
+		// insert a new Brand Wise Barcode
+		() => frappe.tests.make('Brand Wise Barcode', [
 			// values to be set
 			{key: 'value'}
 		]),

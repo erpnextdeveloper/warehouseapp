@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019, wareshouseapp and Contributors
+# Copyright (c) 2018, wareshouseapp and Contributors
 # See license.txt
 from __future__ import unicode_literals
 

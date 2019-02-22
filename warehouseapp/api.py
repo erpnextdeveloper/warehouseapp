@@ -193,7 +193,7 @@ def addImageLink():
 
 @frappe.whitelist()
 def getItemCodeForIB(brand,barcode,name):
-	item_code=frappe.get_all("Item Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
+	item_code=frappe.get_all("Brand Wise Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
 	if not len(item_code)==0:
 		#frappe.msgprint(str(item_code[0]["name"]))
 		frappe.db.set_value("Box Barcode 100x100",name,"item_code",item_code[0]["name"])
@@ -203,7 +203,7 @@ def getItemCodeForIB(brand,barcode,name):
 
 @frappe.whitelist()
 def getItemCodeForGB(brand,barcode,name):
-	item_code=frappe.get_all("Item Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
+	item_code=frappe.get_all("Brand Wise Barcode",filters={"brand":brand,"barcode":barcode},fields=["name"])
 	if not len(item_code)==0:
 		#frappe.msgprint(str(item_code[0]["name"]))
 		frappe.db.set_value("Godrej Barcode 90x240",name,"item_code",item_code[0]["name"])
