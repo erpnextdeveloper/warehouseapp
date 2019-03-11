@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import frappe
-from frappe.utils import cint, get_gravatar, format_datetime, now_datetime,add_days,today,formatdate,date_diff,getdate,get_last_day
+from frappe.utils import cint, get_gravatar, format_datetime, now_datetime,add_days,today,formatdate,date_diff,getdate,get_last_day,flt
 from frappe import throw, msgprint, _
 from frappe.utils.password import update_password as _update_password
 from frappe.desk.notifications import clear_notifications
@@ -197,9 +197,31 @@ def getItemCodeForIB(brand,barcode,name):
 	if not len(item_code)==0:
 		#frappe.msgprint(str(item_code[0]["name"]))
 		frappe.db.set_value("Box Barcode 100x100",name,"item_code",item_code[0]["name"])
+		addChildEntry(name,'Box Barcode 100x100',item_code[0]["name"])
 		return item_code[0]["name"]
 	else:
 		frappe.throw("Barcode Not Avaible For This Brand")
+
+def addChildEntry(name,doctype,item):
+	doc=frappe.get_doc(doctype,name)
+	check_duplicate=frappe.db.sql("""select name from `tabPacking Items` where parent=%s and item=%s""",(name,item))
+	if len(check_duplicate)>=1:
+		get_child_doc=frappe.get_doc("Packing Items",check_duplicate[0][0])
+		get_child_doc.qty=flt(get_child_doc.qty)+flt(1)
+		get_child_doc.save()
+	else:
+		child_item=frappe.get_doc(dict(
+			doctype="Packing Items",
+			source_warehouse=doc.source_warehouse,
+			target_warehouse=doc.target_warehouse,
+			item=item,
+			qty=1,
+			parent=doc.name,
+			parenttype=doc.doctype,
+			parentfield="packing_items",
+			idx=len(doc.packing_items)+1
+		)).insert()
+	
 
 @frappe.whitelist()
 def getItemCodeForGB(brand,barcode,name):
@@ -207,15 +229,83 @@ def getItemCodeForGB(brand,barcode,name):
 	if not len(item_code)==0:
 		#frappe.msgprint(str(item_code[0]["name"]))
 		frappe.db.set_value("Godrej Barcode 90x240",name,"item_code",item_code[0]["name"])
+		addChildEntry(name,'Godrej Barcode 90x240',item_code[0]["name"])
 		return item_code[0]["name"]
 	else:
 		frappe.throw("Barcode Not Avaible For This Brand")
 
 
 @frappe.whitelist()
+def getItemCodeForSB(barcode,name):
+	item_code=frappe.get_all("Item",filters={"name":barcode},fields=["name"])
+	if not len(item_code)==0:
+		#frappe.msgprint(str(item_code[0]["name"]))
+		frappe.db.set_value("Small Barcode 10x100",name,"item_code",item_code[0]["name"])
+		addChildEntry(name,'Small Barcode 10x100',item_code[0]["name"])
+		return item_code[0]["name"]
+	else:
+		frappe.throw("Barcode Not Avaible In Item Master")
+
+
+@frappe.whitelist()
 def getWarehouse():
 	warehouse=frappe.get_list("Warehouse",filters={},fields=["name"])
 	return warehouse
+
+
+@frappe.whitelist()
+def makeStockEntry(name,doctype):
+	doc=frappe.get_doc(doctype,name)
+	for row in doc.packing_items:
+		if not row.source_warehouse:
+			msg="Source Warehouse Is Mandatory For Row: "+str(row.idx)
+			frappe.throw(msg) 
+		if not row.target_warehouse:
+			msg="Target Warehouse Is Mandatory For Row: "+str(row.idx)
+			frappe.throw(msg) 
+	
+	message=''
+	for row in doc.packing_items:
+		result=make_stock_entry(row.item,row.source_warehouse,row.target_warehouse,row.qty)
+		message=message+' '+str(result)
+	frappe.msgprint("Stock Entry Created :"+str(message))
+
+
+
+
+@frappe.whitelist()
+def make_stock_entry(item_code,s_warehouse,t_warehouse,qty=None):
+	bom_no=getBOMNo(item_code)
+	stock_entry = frappe.new_doc("Stock Entry")
+	stock_entry.purpose ="Manufacture"
+	stock_entry.company = frappe.defaults.get_global_default("company")
+	stock_entry.from_bom = 1
+	stock_entry.bom_no = bom_no
+	stock_entry.fg_completed_qty = qty
+	stock_entry.from_warehouse= s_warehouse
+	stock_entry.to_warehouse = t_warehouse
+	stock_entry.get_items()
+	res=stock_entry.insert()
+	res.submit()
+	return res.name
+	
+
+
+
+
+
+def getBOMNo(item_code):
+	bom=frappe.get_all("BOM",filters={"item":item_code,"is_default":1},fields=["name"])
+	if bom:
+		return bom[0].name
+
+	else:
+		msg="BOM Not Available For Item:"+str(item_code)
+		frappe.throw(msg)
+	
+
+
+
 
 
 

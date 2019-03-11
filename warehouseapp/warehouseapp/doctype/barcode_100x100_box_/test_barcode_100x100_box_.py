@@ -6,5 +6,5 @@ from __future__ import unicode_literals
 import frappe
 import unittest
 
-class TestRandomNumberGenerator(unittest.TestCase):
+class TestBoxBarcode100x100(unittest.TestCase):
 	pass

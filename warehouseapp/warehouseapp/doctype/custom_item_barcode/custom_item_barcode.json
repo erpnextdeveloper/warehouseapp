@@ -123,10 +123,10 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2019-02-02 11:51:25.211403", 
+ "modified": "2019-02-25 16:55:25.349767", 
  "modified_by": "Administrator", 
  "module": "warehouseapp", 
- "name": "Item Barcode", 
+ "name": "Custom Item Barcode", 
  "name_case": "", 
  "owner": "Administrator", 
  "permissions": [
